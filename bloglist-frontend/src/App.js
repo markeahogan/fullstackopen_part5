@@ -5,6 +5,9 @@ import loginService from './services/loginService';
 import blogService from './services/blogs';
 
 function App() {
+
+  const USER_LOCAL = 'loggedBlogUser';
+
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
@@ -14,11 +17,24 @@ function App() {
     blogService.getAll().then(x => setBlogs(x));
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem(USER_LOCAL);
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
+  }, [])
+
   const loginWithDetails = async () => {
     try {
       const user = await loginService.login({
         username, password
       })
+
+      window.localStorage.setItem(
+        USER_LOCAL, JSON.stringify(user)
+      );
 
       setUser(user);
       setUsername('');
@@ -28,10 +44,17 @@ function App() {
     }
   }
 
+  const logOut = () => {
+    window.localStorage.setItem(
+      USER_LOCAL, null
+      );
+    setUser(null);
+  };
+
   return (
     <div className="App">
       {user===null && <LoginForm loginDetails={{username, password}} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
-      {user!==null && <BlogsList user={user} blogs={blogs}/>}
+      {user!==null && <BlogsList user={user} blogs={blogs} logOut={logOut}/>}
     </div>
   );
 }
