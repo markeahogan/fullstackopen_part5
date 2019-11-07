@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react';
+import LoginForm from './components/LoginForm';
+import BlogsList from './components/BlogsList';
+import loginService from './services/loginService';
+import blogService from './services/blogs';
 
 function App() {
+  const [blogs, setBlogs] = useState([]);
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    blogService.getAll().then(x => setBlogs(x));
+  }, []);
+
+  const loginWithDetails = async () => {
+    try {
+      const user = await loginService.login({
+        username, password
+      })
+
+      setUser(user);
+      setUsername('');
+      setPassword('');
+    } catch (exception) {
+      //todo show error
+    }
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {user===null && <LoginForm loginDetails={{username, password}} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
+      {user!==null && <BlogsList user={user} blogs={blogs}/>}
     </div>
   );
 }
