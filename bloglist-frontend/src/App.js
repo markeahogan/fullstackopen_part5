@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import LoginForm from './components/LoginForm';
 import BlogsList from './components/BlogsList';
+import UserDetails from './components/UserDetails';
+import CreateBlogForm from './components/CreateBlogForm';
 import loginService from './services/loginService';
 import blogService from './services/blogs';
 
@@ -12,6 +14,10 @@ function App() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [url, setURL] = useState('');
 
   useEffect(() => {
     blogService.getAll().then(x => setBlogs(x));
@@ -51,10 +57,21 @@ function App() {
     setUser(null);
   };
 
+  const createBlog = () => {
+    const blog = {title,author,url};
+    blogService.create(blog);
+  }
+
   return (
     <div className="App">
       {user===null && <LoginForm loginDetails={{username, password}} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
-      {user!==null && <BlogsList user={user} blogs={blogs} logOut={logOut}/>}
+      {user!==null && 
+      (<>
+        <UserDetails user={user} logOut={logOut} />
+        <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
+        <BlogsList blogs={blogs} />
+        </>)
+      }
     </div>
   );
 }
