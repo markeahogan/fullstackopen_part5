@@ -57,12 +57,15 @@ function App() {
     setUser(null);
   };
 
-  const createBlog = () => {
+  const createBlog = async () => {
     const blog = {title,author,url};
-    blogService.create(blog);
+    await blogService.create(blog);    
+    const blogs = await blogService.getAll();
+    setBlogs(blogs);
   }
 
-  return (
+  return (    
+    
     <div className="App">
       {user===null && <LoginForm loginDetails={{username, password}} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
       {user!==null && 
@@ -73,7 +76,7 @@ function App() {
         </>)
       }
     </div>
-  );
+  )
 }
 
 export default App;
