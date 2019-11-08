@@ -1,9 +1,12 @@
 import React, {useState, useEffect} from 'react';
+
 import LoginForm from './components/LoginForm';
 import BlogsList from './components/BlogsList';
+import Togglable from './components/Togglable';
 import UserDetails from './components/UserDetails';
-import CreateBlogForm from './components/CreateBlogForm';
 import Notification from './components/Notification';
+import CreateBlogForm from './components/CreateBlogForm';
+
 import loginService from './services/loginService';
 import blogService from './services/blogs';
 
@@ -86,7 +89,9 @@ function App() {
       {user!==null && 
       (<>
         <UserDetails user={user} logOut={logOut} />
-        <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
+        <Togglable buttonLabel = {"Create blog"}>
+          <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
+        </Togglable>
         <BlogsList blogs={blogs} />
         </>)
       }
