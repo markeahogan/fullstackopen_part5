@@ -51,11 +51,9 @@ function App() {
       setUser(user);
       setUsername('');
       setPassword('');
-      setNotification({message: "Loggged in", style:"success"});
-      setTimeout(() => setNotification(null), 1000);
+      notify("Loggged in");
     } catch (exception) {
-      setNotification({message: "wrong username or password", style:"error"});
-      setTimeout(() => setNotification(null), 1000);
+      notify("wrong username or password", true);
     }
   }
 
@@ -70,15 +68,29 @@ function App() {
       await blogService.create(blog);    
       const blogs = await blogService.getAll();
       setBlogs(blogs);
-      setNotification({message: `Created blog ${title} by ${author}`, style:"success"});
-      setTimeout(() => setNotification(null), 1000);
       setTitle('');
       setAuthor('');
       setURL('');
+      notify(`Created blog ${title} by ${author}`);
     } catch (e) {      
-      setNotification({message: "Failed to create blog", style:"error"});
-      setTimeout(() => setNotification(null), 1000);
+      notify("Failed to create blog", true);
     }
+  }
+
+  const incrementLikes = async (blog) => {
+    try{
+      blog.likes++;
+      await blogService.update(blog);
+      const blogs = await blogService.getAll();
+      setBlogs(blogs);
+    }catch(e){
+      notify("Failed to like blog", true);
+    }
+  }
+
+  const notify = (message, isError) => {
+    setNotification({message, style:(isError ? "error" : "success")});
+    setTimeout(() => setNotification(null), 1000);
   }
 
   return (    
@@ -92,7 +104,7 @@ function App() {
         <Togglable buttonLabel = {"Create blog"}>
           <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
         </Togglable>
-        <BlogsList blogs={blogs} />
+        <BlogsList {...{blogs, incrementLikes}}  />
         </>)
       }
     </div>
