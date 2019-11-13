@@ -88,6 +88,16 @@ function App() {
     }
   }
 
+  const removeBlog = async (blog) => {
+    try{
+      await blogService.remove(blog);
+      const blogs = await blogService.getAll();
+      setBlogs(blogs);
+    }catch(e){
+      notify("Failed to remove blog", true);
+    }
+  }
+
   const notify = (message, isError) => {
     setNotification({message, style:(isError ? "error" : "success")});
     setTimeout(() => setNotification(null), 1000);

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const Blog = ({ blog, incrementLikes }) => {
+const Blog = ({ blog, incrementLikes, remove }) => {
   const [expanded, setExpanded] = useState(false);
 
   const blogStyle = {
@@ -23,6 +23,7 @@ const Blog = ({ blog, incrementLikes }) => {
         <div>{blog.url}</div>
         <div>{blog.likes} likes <button onClick={() => incrementLikes()}>like</button></div>
         <div>added by {username}</div>
+        <button onClick={() => remove()}>remove</button>
       </div>
     </div>
   )
