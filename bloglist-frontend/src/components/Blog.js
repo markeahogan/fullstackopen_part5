@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const Blog = ({ blog, incrementLikes, remove }) => {
+const Blog = ({ blog, incrementLikes, remove, currentUser }) => {
   const [expanded, setExpanded] = useState(false);
 
   const blogStyle = {
@@ -15,6 +15,7 @@ const Blog = ({ blog, incrementLikes, remove }) => {
   const hide = { display: 'none' }
 
   const username = (blog.user && blog.user.name) || '';
+  const showRemoveButton = currentUser && blog.user && blog.user.id === currentUser.id;
 
   return (
     <div style={blogStyle} onClick={() => setExpanded(!expanded)}>
@@ -23,7 +24,7 @@ const Blog = ({ blog, incrementLikes, remove }) => {
         <div>{blog.url}</div>
         <div>{blog.likes} likes <button onClick={() => incrementLikes()}>like</button></div>
         <div>added by {username}</div>
-        <button onClick={() => remove()}>remove</button>
+        {showRemoveButton && (<button onClick={() => remove()}>remove</button>)}
       </div>
     </div>
   )

@@ -117,7 +117,7 @@ function App() {
         <Togglable buttonLabel = {"Create blog"}>
           <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
         </Togglable>
-        <BlogsList {...{blogs, incrementLikes, removeBlog}}  />
+        <BlogsList {...{blogs, incrementLikes, removeBlog, currentUser:user}}  />
         </>)
       }
     </div>
