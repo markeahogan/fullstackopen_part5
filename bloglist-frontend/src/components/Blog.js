@@ -15,16 +15,16 @@ const Blog = ({ blog, incrementLikes, remove, currentUser }) => {
   const hide = { display: 'none' }
 
   const username = (blog.user && blog.user.name) || '';
-  const showRemoveButton = currentUser && blog.user && blog.user.id === currentUser.id;
+  const showRemoveButton = !blog.user || currentUser && blog.user.username === currentUser.username;
 
   return (
     <div style={blogStyle} onClick={() => setExpanded(!expanded)}>
       {blog.title} {blog.author}
       <div style={expanded ? show : hide}>
         <div>{blog.url}</div>
-        <div>{blog.likes} likes <button onClick={() => incrementLikes()}>like</button></div>
+        <div>{blog.likes} likes <button onClick={() => incrementLikes(blog)}>like</button></div>
         <div>added by {username}</div>
-        {showRemoveButton && (<button onClick={() => remove()}>remove</button>)}
+        {showRemoveButton && (<button onClick={() => remove(blog)}>remove</button>)}
       </div>
     </div>
   )

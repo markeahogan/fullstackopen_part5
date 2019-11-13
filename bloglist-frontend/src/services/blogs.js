@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:5000/api/blogs'
+const baseUrl = 'http://localhost:3003/api/blogs'
 
 let token = null
 
@@ -14,12 +14,18 @@ const create = async blog => {
 }
 
 const update = async (blog) => {
-  const response = await axios.put(`${baseUrl}/${blog.id}`, blog, getConfig());
+  const updatedBlog = {
+    title:blog.title,
+    author:blog.author,
+    url:blog.url,
+    likes:blog.likes 
+  };
+  const response = await axios.put(`${baseUrl}/${blog.id}`, updatedBlog, getConfig());
   return response.data;
 }
 
 const remove = async (blog) => {
-  const response = await axios.delete(`${baseUrl}/${blog.id}`);
+  const response = await axios.delete(`${baseUrl}/${blog.id}`, getConfig());
   return response.data;
 }
 
