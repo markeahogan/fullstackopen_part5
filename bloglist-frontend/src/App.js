@@ -89,6 +89,9 @@ function App() {
   }
 
   const removeBlog = async (blog) => {
+    const confirm = window.confirm(`delete ${blog.title}?`);
+    if (!confirm){ return; }
+
     try{
       await blogService.remove(blog);
       const blogs = await blogService.getAll();
@@ -114,7 +117,7 @@ function App() {
         <Togglable buttonLabel = {"Create blog"}>
           <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
         </Togglable>
-        <BlogsList {...{blogs, incrementLikes}}  />
+        <BlogsList {...{blogs, incrementLikes, removeBlog}}  />
         </>)
       }
     </div>
