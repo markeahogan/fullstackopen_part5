@@ -22,9 +22,9 @@ const Blog = ({ blog, incrementLikes, remove, currentUser }) => {
       {blog.title} {blog.author}
       <div style={expanded ? show : hide}>
         <div>{blog.url}</div>
-        <div>{blog.likes} likes <button onClick={() => incrementLikes(blog)}>like</button></div>
+        <div>{blog.likes} likes <button onClick={(e) => {incrementLikes(blog); e.stopPropagation();}}>like</button></div>
         <div>added by {username}</div>
-        {showRemoveButton && (<button onClick={() => remove(blog)}>remove</button>)}
+        {showRemoveButton && (<button onClick={(e) => {remove(blog); e.stopPropagation();}}>remove</button>)}
       </div>
     </div>
   )
