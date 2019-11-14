@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import LoginForm from './components/LoginForm';
 import BlogsList from './components/BlogsList';
@@ -12,119 +12,119 @@ import blogService from './services/blogs';
 
 function App() {
 
-  const USER_LOCAL = 'loggedBlogUser';
+    const USER_LOCAL = 'loggedBlogUser';
 
-  const [blogs, setBlogs] = useState([]);
-  const [notification, setNotification] = useState(null);
+    const [blogs, setBlogs] = useState([]);
+    const [notification, setNotification] = useState(null);
 
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+    const [user, setUser] = useState(null);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setURL] = useState('');  
+    const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [url, setURL] = useState('');
 
-  const createBlogFormRef = React.createRef();
+    const createBlogFormRef = React.createRef();
 
-  useEffect(() => {
-    blogService.getAll().then(x => setBlogs(x));
-  }, []);
+    useEffect(() => {
+        blogService.getAll().then(x => setBlogs(x));
+    }, []);
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem(USER_LOCAL);
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, [])
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem(USER_LOCAL);
+        if (loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON);
+            setUser(user);
+            blogService.setToken(user.token);
+        }
+    }, []);
 
-  const loginWithDetails = async () => {
-    try {
-      const user = await loginService.login({
-        username, password
-      })
+    const loginWithDetails = async () => {
+        try {
+            const user = await loginService.login({
+                username, password
+            });
 
-      window.localStorage.setItem(
-        USER_LOCAL, JSON.stringify(user)
-      );
+            window.localStorage.setItem(
+                USER_LOCAL, JSON.stringify(user)
+            );
 
-      setUser(user);
-      setUsername('');
-      setPassword('');
-      notify("Loggged in");
-    } catch (exception) {
-      notify("wrong username or password", true);
-    }
-  }
+            setUser(user);
+            setUsername('');
+            setPassword('');
+            notify('Loggged in');
+        } catch (exception) {
+            notify('wrong username or password', true);
+        }
+    };
 
-  const logOut = () => {
-    window.localStorage.setItem(USER_LOCAL, null);
-    setUser(null);
-  };
+    const logOut = () => {
+        window.localStorage.setItem(USER_LOCAL, null);
+        setUser(null);
+    };
 
-  const createBlog = async () => {
-    const blog = {title,author,url};
-    createBlogFormRef.current.toggleVisibility();
-    try{
-      await blogService.create(blog);    
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-      setTitle('');
-      setAuthor('');
-      setURL('');
-      notify(`Created blog ${title} by ${author}`);
-    } catch (e) {      
-      notify("Failed to create blog", true);
-    }
-  }
+    const createBlog = async () => {
+        const blog = { title,author,url };
+        createBlogFormRef.current.toggleVisibility();
+        try{
+            await blogService.create(blog);
+            const blogs = await blogService.getAll();
+            setBlogs(blogs);
+            setTitle('');
+            setAuthor('');
+            setURL('');
+            notify(`Created blog ${title} by ${author}`);
+        } catch (e) {
+            notify('Failed to create blog', true);
+        }
+    };
 
-  const incrementLikes = async (blog) => {
-    try{
-      blog.likes++;
-      await blogService.update(blog);
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-    }catch(e){
-      notify("Failed to like blog", true);
-    }
-  }
+    const incrementLikes = async (blog) => {
+        try{
+            blog.likes++;
+            await blogService.update(blog);
+            const blogs = await blogService.getAll();
+            setBlogs(blogs);
+        }catch(e){
+            notify('Failed to like blog', true);
+        }
+    };
 
-  const removeBlog = async (blog) => {
-    const confirm = window.confirm(`delete ${blog.title}?`);
-    if (!confirm){ return; }
+    const removeBlog = async (blog) => {
+        const confirm = window.confirm(`delete ${blog.title}?`);
+        if (!confirm){ return; }
 
-    try{
-      await blogService.remove(blog);
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-    }catch(e){
-      notify("Failed to remove blog", true);
-    }
-  }
+        try{
+            await blogService.remove(blog);
+            const blogs = await blogService.getAll();
+            setBlogs(blogs);
+        }catch(e){
+            notify('Failed to remove blog', true);
+        }
+    };
 
-  const notify = (message, isError) => {
-    setNotification({message, style:(isError ? "error" : "success")});
-    setTimeout(() => setNotification(null), 1000);
-  }
+    const notify = (message, isError) => {
+        setNotification({ message, style:(isError ? 'error' : 'success') });
+        setTimeout(() => setNotification(null), 1000);
+    };
 
-  return (    
-    
-    <div className="App">
-      {notification && <Notification {...notification} /> }
-      {user===null && <LoginForm loginDetails={{username, password}} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
-      {user!==null && 
+    return (
+
+        <div className="App">
+            {notification && <Notification {...notification} /> }
+            {user===null && <LoginForm loginDetails={{ username, password }} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
+            {user!==null &&
       (<>
         <UserDetails user={user} logOut={logOut} />
-        <Togglable buttonLabel = {"Create blog"} ref={createBlogFormRef}>
-          <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
+        <Togglable buttonLabel = {'Create blog'} ref={createBlogFormRef}>
+            <CreateBlogForm data={{ title,author,url }} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={() => createBlog()}/>
         </Togglable>
-        <BlogsList {...{blogs, incrementLikes, removeBlog, currentUser:user}}  />
+        <BlogsList {...{ blogs, incrementLikes, removeBlog, currentUser:user }}  />
         </>)
-      }
-    </div>
-  )
+            }
+        </div>
+    );
 }
 
 export default App;
