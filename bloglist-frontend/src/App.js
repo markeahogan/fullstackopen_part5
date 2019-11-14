@@ -25,6 +25,8 @@ function App() {
   const [author, setAuthor] = useState('');
   const [url, setURL] = useState('');  
 
+  const createBlogFormRef = React.createRef();
+
   useEffect(() => {
     blogService.getAll().then(x => setBlogs(x));
   }, []);
@@ -64,6 +66,7 @@ function App() {
 
   const createBlog = async () => {
     const blog = {title,author,url};
+    createBlogFormRef.current.toggleVisibility();
     try{
       await blogService.create(blog);    
       const blogs = await blogService.getAll();
@@ -114,7 +117,7 @@ function App() {
       {user!==null && 
       (<>
         <UserDetails user={user} logOut={logOut} />
-        <Togglable buttonLabel = {"Create blog"}>
+        <Togglable buttonLabel = {"Create blog"} ref={createBlogFormRef}>
           <CreateBlogForm data={{title,author,url}} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={()=>createBlog()}/>
         </Togglable>
         <BlogsList {...{blogs, incrementLikes, removeBlog, currentUser:user}}  />
