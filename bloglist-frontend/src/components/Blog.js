@@ -20,7 +20,7 @@ const Blog = ({ blog, incrementLikes, remove, currentUser }) => {
     return (
         <div style={blogStyle} onClick={() => setExpanded(!expanded)}>
             {blog.title} {blog.author}
-            <div style={expanded ? show : hide}>
+            <div className={'expandable'} style={expanded ? show : hide}>
                 <div>{blog.url}</div>
                 <div>{blog.likes} likes <button onClick={(e) => {incrementLikes(blog); e.stopPropagation();}}>like</button></div>
                 <div>added by {username}</div>
