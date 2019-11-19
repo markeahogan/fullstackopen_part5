@@ -12,7 +12,11 @@ describe('App', () => {
         expect(app,container).not.toHaveTextContent('blogs');
     });
 
-    test('show blogs when logged in', () => {
-        
+    test('show blogs when logged in', () => {        
+        const app = render(<App />);
+        app.rerender(<App />);
+
+        expect(app.container).toHaveTextContent('login');
+        expect(app,container).not.toHaveTextContent('blogs');
     });
 });
