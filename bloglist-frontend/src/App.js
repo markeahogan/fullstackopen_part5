@@ -9,6 +9,7 @@ import CreateBlogForm from './components/CreateBlogForm';
 
 import loginService from './services/loginService';
 import blogService from './services/blogs';
+import  { useField } from './hooks';
 
 function App() {
 
@@ -18,12 +19,12 @@ function App() {
     const [notification, setNotification] = useState(null);
 
     const [user, setUser] = useState(null);
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const username = useField('text');
+    const password = useField('text');
 
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [url, setURL] = useState('');
+    const title = useField('text');
+    const author = useField('text');
+    const url = useField('text');
 
     const createBlogFormRef = React.createRef();
 
@@ -43,7 +44,7 @@ function App() {
     const loginWithDetails = async () => {
         try {
             const user = await loginService.login({
-                username, password
+                username:username.value, password:password.value
             });
 
             window.localStorage.setItem(
@@ -51,8 +52,8 @@ function App() {
             );
 
             setUser(user);
-            setUsername('');
-            setPassword('');
+            username.reset();
+            password.reset();
             notify('Loggged in');
         } catch (exception) {
             notify('wrong username or password', true);
@@ -65,15 +66,19 @@ function App() {
     };
 
     const createBlog = async () => {
-        const blog = { title,author,url };
+        const blog = {
+            title:title.value,
+            author:author.value,
+            url:url.value
+        };
         createBlogFormRef.current.toggleVisibility();
         try{
             await blogService.create(blog);
             const blogs = await blogService.getAll();
             setBlogs(blogs);
-            setTitle('');
-            setAuthor('');
-            setURL('');
+            title.reset();
+            author.reset();
+            url.reset();
             notify(`Created blog ${title} by ${author}`);
         } catch (e) {
             notify('Failed to create blog', true);
@@ -113,12 +118,12 @@ function App() {
 
         <div className="App">
             {notification && <Notification {...notification} /> }
-            {user===null && <LoginForm loginDetails={{ username, password }} setUsername={setUsername} setPassword={setPassword} submit={() => loginWithDetails()} />}
+            {user===null && <LoginForm usernameField={username} passwordField={password} submit={() => loginWithDetails()} />}
             {user!==null &&
       (<>
         <UserDetails user={user} logOut={logOut} />
         <Togglable buttonLabel = {'Create blog'} ref={createBlogFormRef}>
-            <CreateBlogForm data={{ title,author,url }} setTitle={setTitle} setAuthor={setAuthor} setURL={setURL} submit={() => createBlog()}/>
+            <CreateBlogForm title={title} author={author} url={url} submit={() => createBlog()}/>
         </Togglable>
         <BlogsList {...{ blogs, incrementLikes, removeBlog, currentUser:user }}  />
         </>)

@@ -1,7 +1,7 @@
 import React from 'react';
 import TextField from './TextField';
 
-const CreateBlogForm = ({ data, setTitle, setAuthor, setURL, submit }) => {
+const CreateBlogForm = ({ title, author, url, submit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         submit();
@@ -11,9 +11,9 @@ const CreateBlogForm = ({ data, setTitle, setAuthor, setURL, submit }) => {
         <>
             <form onSubmit={handleSubmit}>
                 <h2>Create blog</h2>
-                <TextField label={'Title'} value={data.title} onChange={setTitle} />
-                <TextField label={'Author'} value={data.author} onChange={setAuthor} />
-                <TextField label={'URL'} value={data.url} onChange={setURL} />
+                <TextField label={'Title'} {...title} />
+                <TextField label={'Author'} {...author} />
+                <TextField label={'URL'} {...url} />
                 <input type="submit" value="create" />
             </form>
         </>
